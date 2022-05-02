@@ -1,21 +1,28 @@
 package com.frst.controller;
 
 import com.frst.model.Jedi;
+import com.frst.repository.JediRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
 @Controller
 public class JediController {
+
+    @Autowired
+    private JediRepository jediRepository;
+
     @GetMapping("/jedi")
     public ModelAndView jedi(){
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("jedi");
 
-        final Jedi luke = new Jedi("Luke", "sky");
-        modelAndView.addObject( "allJedi", List.of(luke));
+        modelAndView.addObject( "allJedi", jediRepository.getAllJedi());
         return modelAndView;
     }
 
@@ -23,10 +30,16 @@ public class JediController {
     public ModelAndView newJedi(){
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("new-jedi");
-
-        final Jedi luke = new Jedi("Luke", "sky");
         modelAndView.addObject("jedi", new Jedi());
         return modelAndView;
     }
+
+    @PostMapping("/jedi")
+    public String jedi(@ModelAttribute Jedi jedi){
+       jediRepository.add(jedi);
+        return "redirect:jedi";
+    }
+
+
 
 }
